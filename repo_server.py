@@ -168,6 +168,30 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         print("[http] " + fmt % args, flush=True)
 
 
+def _lan_ips():
+    """Return the machine's LAN IPv4 addresses (best effort, no external calls)."""
+    ips = []
+    try:
+        import socket
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0)
+        s.connect(("10.255.255.255", 1))  # never sent; just picks a route
+        ips.append(s.getsockname()[0])
+        s.close()
+    except Exception:
+        pass
+    try:
+        import socket
+        host = socket.gethostname()
+        for info in socket.getaddrinfo(host, None, socket.AF_INET):
+            ip = info[4][0]
+            if not ip.startswith("127.") and ip not in ips:
+                ips.append(ip)
+    except Exception:
+        pass
+    return ips
+
+
 def main():
     os.makedirs(PAYLOAD_DIR, exist_ok=True)
     if not os.path.exists(GH_SRC):
@@ -175,8 +199,16 @@ def main():
             json.dump([], f)
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8090
     print(f"pldmgr-selfhost v{__version__} serving on :{port}", flush=True)
-    print(f"  catalog:    http://<host>:{port}/payloads.json", flush=True)
     print(f"  drop dir:   {PAYLOAD_DIR}", flush=True)
+    # Print every LAN IP with the full URL to paste into Payload Manager,
+    # so users don't have to hunt for the server's address.
+    print(f"  Add this URL in Payload Manager (pick your network's):", flush=True)
+    ips = _lan_ips()
+    if ips:
+        for ip in ips:
+            print(f"    http://{ip}:{port}/payloads.json", flush=True)
+    else:
+        print(f"    http://<this-computer's-ip>:{port}/payloads.json", flush=True)
     http.server.ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()
 
 
