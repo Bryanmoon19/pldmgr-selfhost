@@ -1,0 +1,19 @@
+services:
+  pldmgr-selfhost:
+    # or use the prebuilt image (published automatically on every release):
+    # image: ghcr.io/<you>/pldmgr-selfhost:latest
+    build: .
+    container_name: pldmgr-selfhost
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    volumes:
+      # Drop your .elf/.bin/.lua payloads here — they appear in the catalog instantly.
+      - ./payloads:/app/payloads
+      # Optional: point at a NAS share instead of a local folder.
+      # - /mnt/nas/ps5-payloads:/app/payloads
+    environment:
+      - REPO_NAME=My Private Payloads
+      - GH_REFRESH_SECONDS=3600
+      # Optional GitHub auto-mirror (see github_sources.json)
+      # - GITHUB_TOKEN=${GITHUB_TOKEN}   # for private repos / rate limits

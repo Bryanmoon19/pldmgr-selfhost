@@ -1,0 +1,8 @@
+[
+  {
+    "repo": "itsPLK/ps5-payload-manager",
+    "include": "\\.elf$",
+    "tag": "latest",
+    "_comment": "Mirror the latest .elf from this repo's releases into payloads/github/. include is a regex applied to asset names."
+  }
+]
