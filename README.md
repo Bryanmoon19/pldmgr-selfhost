@@ -2,6 +2,8 @@
 
 **Self-hosted private payload repository for [PS5 Payload Manager](https://github.com/itsPLK/ps5-payload-manager).**
 
+![How it works](assets/how-it-works.svg)
+
 Run your own "cloud repository" source on your home network: drop payload files into a folder
 (or let it auto-mirror GitHub releases), and they show up in Payload Manager's
 cloud repo browser on your console — searchable, categorized, and SHA-256 verified.

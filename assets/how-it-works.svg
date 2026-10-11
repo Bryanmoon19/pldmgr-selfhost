@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 420" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8b95a5"/>
+    </marker>
+    <style>
+      .box { fill: #161b22; stroke: #30363d; stroke-width: 1.5; rx: 10; }
+      .title { fill: #e6edf3; font-size: 20px; font-weight: 600; }
+      .subtitle { fill: #9aa5b1; font-size: 12px; }
+      .bhead { fill: #e6edf3; font-size: 15px; font-weight: 600; }
+      .btext { fill: #9aa5b1; font-size: 11.5px; }
+      .step { fill: #1f6feb; font-size: 13px; font-weight: 700; }
+      .accent { stroke: #388bfd; stroke-width: 2; }
+      .gh { stroke: #2ea043; stroke-width: 2; }
+      .flow { stroke: #8b95a5; stroke-width: 2; fill: none; }
+      .ftext { fill: #8b95a5; font-size: 11px; }
+    </style>
+  </defs>
+
+  <rect width="920" height="420" fill="#0d1117"/>
+  <text x="460" y="40" text-anchor="middle" class="title">pldmgr-selfhost — your private Payload Manager repository</text>
+  <text x="460" y="60" text-anchor="middle" class="subtitle">Drop payloads in a folder (or auto-mirror GitHub releases) → browse &amp; install them on your PS5</text>
+
+  <!-- Step 1: drop folder -->
+  <rect x="40" y="100" width="240" height="150" rx="10" class="box"/>
+  <text x="60" y="130" class="step">1 · payloads/ folder</text>
+  <text x="60" y="155" class="btext">Drag .elf / .bin / .lua files here</text>
+  <text x="60" y="173" class="btext">(NAS share, USB copy, FTP — anything)</text>
+  <text x="60" y="191" class="btext">Subfolders become categories</text>
+  <text x="60" y="209" class="btext">New files appear instantly —</text>
+  <text x="60" y="227" class="btext">no restart needed</text>
+  <path d="M60 235 h80" class="accent"/>
+
+  <!-- GitHub mirror -->
+  <rect x="40" y="290" width="240" height="90" rx="10" class="box"/>
+  <text x="60" y="318" class="bhead">GitHub releases ⟶</text>
+  <text x="60" y="338" class="btext">github_sources.json lists repos</text>
+  <text x="60" y="356" class="btext">to auto-download (hourly)</text>
+
+  <!-- Step 2: server -->
+  <rect x="360" y="100" width="230" height="170" rx="10" class="box"/>
+  <text x="380" y="130" class="step">2 · pldmgr-selfhost</text>
+  <text x="380" y="155" class="btext">Docker or plain Python 3.10+</text>
+  <text x="380" y="173" class="btext">Serves payloads.json catalog</text>
+  <text x="380" y="191" class="btext">Auto SHA-256 checksums</text>
+  <text x="380" y="209" class="btext">CORS + plain HTTP (LAN-friendly)</text>
+  <text x="380" y="227" class="btext">http://your-ip:8090/payloads.json</text>
+
+  <!-- Step 3: PS5 -->
+  <rect x="670" y="100" width="220" height="170" rx="10" class="box"/>
+  <text x="690" y="130" class="step">3 · your PS5</text>
+  <text x="690" y="155" class="btext">Payload Manager</text>
+  <text x="690" y="173" class="btext">Settings → Manage Sources</text>
+  <text x="690" y="191" class="btext">→ Add Source (paste URL)</text>
+  <text x="690" y="209" class="btext">Your payloads appear in the</text>
+  <text x="690" y="227" class="btext">cloud repo browser, verified</text>
+
+  <!-- flows -->
+  <path d="M280 175 h80" class="flow" marker-end="url(#arrow)"/>
+  <text x="320" y="165" text-anchor="middle" class="ftext">files</text>
+  <path d="M160 290 v-40" class="flow" marker-end="url(#arrow)"/>
+  <text x="170" y="268" class="ftext">mirror</text>
+  <path d="M590 185 h80" class="flow" marker-end="url(#arrow)"/>
+  <text x="630" y="175" text-anchor="middle" class="ftext">catalog</text>
+
+  <text x="460" y="410" text-anchor="middle" class="subtitle">Keep it on your home network — no binaries shipped, you point it at your own files. MIT license.</text>
+</svg>
