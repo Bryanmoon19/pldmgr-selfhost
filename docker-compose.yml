@@ -1,7 +1,7 @@
 services:
   pldmgr-selfhost:
     # or use the prebuilt image (published automatically on every release):
-    # image: ghcr.io/<you>/pldmgr-selfhost:latest
+    # image: ghcr.io/bryanmoon19/pldmgr-selfhost:latest
     build: .
     container_name: pldmgr-selfhost
     restart: unless-stopped

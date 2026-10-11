@@ -22,5 +22,5 @@ and versioning follows [Semantic Versioning](https://semver.org/).
 - `/version` endpoint and `X-Server-Version` header.
 - Dockerfile and docker-compose.yml.
 
-[Unreleased]: https://github.com/<you>/pldmgr-selfhost/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/<you>/pldmgr-selfhost/releases/tag/v0.1.0
+[Unreleased]: https://github.com/Bryanmoon19/pldmgr-selfhost/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Bryanmoon19/pldmgr-selfhost/releases/tag/v0.1.0

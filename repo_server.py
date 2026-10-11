@@ -23,6 +23,7 @@ import os
 import re
 import sys
 import time
+import urllib.parse
 import urllib.request
 
 __version__ = "0.1.0"
@@ -111,9 +112,8 @@ def build_catalog():
             url = "/payloads/" + rel.replace(os.sep, "/")
             name, version = guess_meta(fn)
             category = "GitHub Mirror" if "github" in root.split(os.sep) else "My Collection"
-            try:
-                checksum = sha256(path)
-            except OSError:
+            checksum = _checksum_cached(path)
+            if checksum is None:
                 continue  # file vanished mid-scan
             payloads.append({
                 "name": name,
@@ -127,9 +127,27 @@ def build_catalog():
     return {"name": REPO_NAME, "payloads": payloads}
 
 
+# mtime+size keyed checksum cache so big files aren't re-hashed on every request
+_ck_cache = {}
+
+
+def _checksum_cached(path):
+    try:
+        st = os.stat(path)
+        key = (path, st.st_mtime_ns, st.st_size)
+        hit = _ck_cache.get(path)
+        if hit and hit[0] == key:
+            return hit[1]
+        value = (sha256(path), key)
+        _ck_cache[path] = value
+        return value[0]
+    except OSError:
+        return None
+
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
-        super().__init__(*a, directory=BASE, **kw)
+        super().__init__(*a, **kw)
 
     def end_headers(self):
         # CORS so the pldmgr web dashboard can fetch the catalog cross-origin.
@@ -137,8 +155,40 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
+    def _serve_payload_file(self, rel_url_path):
+        """Serve a file from PAYLOAD_DIR only. Rejects anything that resolves
+        outside it (path traversal, symlinks)."""
+        rel = urllib.parse.unquote(rel_url_path)
+        # normalize and verify the resolved path stays inside PAYLOAD_DIR
+        target = os.path.realpath(os.path.join(PAYLOAD_DIR, rel))
+        root = os.path.realpath(PAYLOAD_DIR)
+        if target != root and not target.startswith(root + os.sep):
+            self.send_error(403)
+            return
+        if not os.path.isfile(target):
+            self.send_error(404)
+            return
+        ctype = self.guess_type(target)
+        try:
+            with open(target, "rb") as f:
+                fs = os.fstat(f.fileno())
+        except OSError:
+            self.send_error(404)
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(fs[6]))
+        self.send_header("Last-Modified",
+                         self.date_time_string(fs.st_mtime))
+        self.end_headers()
+        try:
+            self.copyfile(open(target, "rb"), self.wfile)
+        except OSError:
+            pass
+
     def do_GET(self):
-        if self.path.split("?")[0] == "/payloads.json":
+        path = self.path.split("?")[0]
+        if path == "/payloads.json":
             body = json.dumps(build_catalog(), indent=1).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -146,15 +196,17 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
-        elif self.path.split("?")[0] == "/version":
+        elif path == "/version":
             body = f'{{"version": "{__version__}"}}\n'.encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
+        elif path.startswith("/payloads/"):
+            self._serve_payload_file(path[len("/payloads/"):])
         else:
-            super().do_GET()
+            self.send_error(404)
 
     def do_POST(self):
         if self.path == "/refresh":

@@ -19,10 +19,14 @@ Upstream payloads remain the property of their respective authors.
 
    ```bash
    mkdir ps5-repo && cd ps5-repo
-   curl -O https://raw.githubusercontent.com/<you>/pldmgr-selfhost/main/docker-compose.yml
+   curl -O https://raw.githubusercontent.com/Bryanmoon19/pldmgr-selfhost/main/docker-compose.yml
+   sed -i 's|^    build: .*||; s|^    # image: \(.*\)$|    image: \1|' docker-compose.yml
    mkdir payloads
    docker compose up -d
    ```
+
+   (That switches the compose file to the ready-made image — no build needed.
+   Prefer to build it yourself? `git clone` the repo instead of the curl line.)
 
 2. **Put payloads in the folder** — drag `.elf` / `.bin` / `.lua` files into
    the `payloads` folder (FTP them over, browse to it over the network, whatever
