@@ -67,6 +67,8 @@ Requires Python 3.10+, no other dependencies (standard library only).
 ## Keeping it updated
 
 The Docker image is published to GitHub Container Registry on every release.
+It's a multi-arch image (`linux/amd64` **and** `linux/arm64`) — Docker
+auto-picks the right one, so the same pull command works on a Raspberry Pi.
 To update:
 
 ```bash

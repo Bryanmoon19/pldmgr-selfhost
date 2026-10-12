@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versioning follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Docker image now publishes as a multi-arch manifest (`linux/amd64` +
+  `linux/arm64`) — the same image now runs natively on Raspberry Pi and
+  other ARM64 boxes. (Thanks to the Reddit user who reported the Pi issue!)
 
 ## [0.1.0] - 2026-10-11
 
